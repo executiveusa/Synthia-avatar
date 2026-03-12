@@ -35,3 +35,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Env / secrets — never commit
+.env
+.env.local
+.env.production
+.env.staging
+*.env
+master.env
+secrets.env

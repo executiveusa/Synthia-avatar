@@ -3,6 +3,7 @@ export interface BtnListType {
   link: string;
   icon: string;
   newTab: boolean;
+  isLocked?: boolean;
 }
 
 export interface ProjectListType {
