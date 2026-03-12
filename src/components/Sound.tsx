@@ -3,9 +3,11 @@ import { motion } from "framer-motion";
 import { Volume2, VolumeX } from "lucide-react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useTranslations } from "next-intl";
 import { useAvatarContext } from "@/context/AvatarContext";
 
 const Modal = ({ onClose, toggle }: { toggle: any; onClose: any }) => {
+  const t = useTranslations("Sound");
   const modalRoot = document.getElementById("my-modal");
   if (!modalRoot) {
     return null;
@@ -17,19 +19,19 @@ const Modal = ({ onClose, toggle }: { toggle: any; onClose: any }) => {
             py-8 px-6 xs:px-10 sm:px-16 rounded shadow-glass-inset text-center space-y-8
             "
       >
-        <p className="font-light">¿Deseas activar la música de fondo?</p>
+        <p className="font-light">{t("question")}</p>
         <div className="flex items-center justify-center space-x-4">
           <button
             onClick={toggle}
             className="px-4 py-2 border border-accent/30 border-solid hover:shadow-glass-sm rounded mr-2"
           >
-            Sí
+            {t("yes")}
           </button>
           <button
             onClick={onClose}
             className="px-4 py-2 border border-accent/30 border-solid hover:shadow-glass-sm rounded"
           >
-            No
+            {t("no")}
           </button>
         </div>
       </div>
