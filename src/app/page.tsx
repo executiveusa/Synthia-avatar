@@ -3,6 +3,8 @@ import bg from "../../public/background/home-background.png";
 import RenderModel from "@/components/RenderModel";
 import WizardModel from "@/components/models/Wizard";
 import Navigation from "@/components/navigation";
+import AlexNameplate from "@/components/AlexNameplate";
+import AgentAlexNFTCard from "@/components/AgentAlexNFTCard";
 
 export default function Home() {
   return (
@@ -21,6 +23,8 @@ export default function Home() {
           <WizardModel />
         </RenderModel>
       </div>
+      <AlexNameplate />
+      <AgentAlexNFTCard />
     </main>
   );
 }
