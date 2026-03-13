@@ -10,7 +10,8 @@
     "deploy:agent": "tsx tools/vercel-agent/agent.ts",
     "deploy:check": "tsx tools/vercel-agent/check-deployment.ts",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "vault:sync": "tsx tools/vault-agent/agent.ts"
   },
   "dependencies": {
     "@emailjs/browser": "^4.3.3",
