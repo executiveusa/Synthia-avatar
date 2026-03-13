@@ -1,6 +1,7 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from "react";
+import { useTranslations } from "next-intl";
 
 const KupuriLogo = () => (
   <svg
@@ -35,17 +36,18 @@ const KupuriLogo = () => (
   </svg>
 );
 
-const fields = [
-  { label: "Token ID", value: "KM-ALEX-001" },
-  { label: "Colección", value: "Kupuri Digital Identity" },
-  { label: "Creado por", value: "Ivette Milo" },
-  { label: "Marca", value: "Kupuri Media™" },
-  { label: "Plataforma", value: "Synthia 3.0™" },
-  { label: "Registro", value: "Kupuri IP Chain" },
-];
-
 function AgentAlexNFTCard() {
   const [open, setOpen] = useState(false);
+  const t = useTranslations("NFTCard");
+
+  const fields = [
+    { label: t("fieldTokenId"), value: "KM-ALEX-001" },
+    { label: t("fieldColeccion"), value: "Kupuri Digital Identity" },
+    { label: t("fieldCreadoPor"), value: "Ivette Milo" },
+    { label: t("fieldMarca"), value: "Kupuri Media™" },
+    { label: t("fieldPlataforma"), value: "Synthia 3.0™" },
+    { label: t("fieldRegistro"), value: "Kupuri IP Chain" },
+  ];
 
   return (
     <>
@@ -53,7 +55,7 @@ function AgentAlexNFTCard() {
       <button
         onClick={() => setOpen((v) => !v)}
         className="fixed bottom-20 right-3 xs:right-5 z-50 custom-bg rounded-full px-3 py-1.5 text-[10px] font-bold tracking-widest text-accent hover:shadow-glass-sm transition-all"
-        aria-label="Toggle NFT card"
+        aria-label={t("toggleLabel")}
       >
         NFT
       </button>
@@ -75,17 +77,17 @@ function AgentAlexNFTCard() {
                   <KupuriLogo />
                   <div>
                     <p className="text-accent text-xs font-bold tracking-wider">
-                      AGENT ALEX™
+                      {t("agentName")}
                     </p>
                     <p className="text-muted text-[9px] tracking-widest">
-                      KUPURI MEDIA
+                      {t("brand")}
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setOpen(false)}
                   className="text-muted hover:text-accent text-sm leading-none"
-                  aria-label="Close NFT card"
+                  aria-label={t("closeLabel")}
                 >
                   ✕
                 </button>
@@ -109,13 +111,13 @@ function AgentAlexNFTCard() {
               <div className="border-t border-accent/20 pt-2 flex items-center gap-1.5">
                 <span className="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse" />
                 <span className="text-green-400 text-[9px] tracking-wider uppercase font-bold">
-                  Entidad Digital Protegida
+                  {t("status")}
                 </span>
               </div>
 
               {/* Footer */}
               <p className="text-muted text-[8px] text-center tracking-wide">
-                © 2026 Kupuri Media · Todos los derechos reservados
+                {t("footer")}
               </p>
             </div>
           </motion.div>

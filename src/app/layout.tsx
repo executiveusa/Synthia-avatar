@@ -8,6 +8,9 @@ import Sound from "@/components/Sound";
 import Footer from "@/components/Footer";
 import InviteOnlyModal from "@/components/InviteOnlyModal";
 import { AvatarProvider } from "@/context/AvatarContext";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages, getLocale } from "next-intl/server";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const dancingScript = Dancing_Script({
@@ -22,13 +25,16 @@ export const metadata: Metadata = {
     "AI Agent Alex — Powered by Synthia 3.0™, created by Ivette Milo. Kupuri Media.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const messages = await getMessages();
+  const locale = await getLocale();
+
   return (
-    <html lang="es">
+    <html lang={locale}>
       <body
         className={clsx(
           inter.variable,
@@ -36,15 +42,18 @@ export default function RootLayout({
           "bg-background text-foreground font-inter"
         )}
       >
-        <AvatarProvider>
-          <HomeBtn />
-          {children}
-          <FireFliesBackground />
-          <Sound />
-          <Footer />
-          <InviteOnlyModal />
-          <div id="my-modal"></div>
-        </AvatarProvider>
+        <NextIntlClientProvider messages={messages}>
+          <AvatarProvider>
+            <HomeBtn />
+            <LanguageSwitcher />
+            {children}
+            <FireFliesBackground />
+            <Sound />
+            <Footer />
+            <InviteOnlyModal />
+            <div id="my-modal"></div>
+          </AvatarProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
