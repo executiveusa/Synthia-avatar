@@ -5,18 +5,12 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useAvatarContext } from "@/context/AvatarContext";
 
-const Modal = ({ onClose, toggle }: { toggle: any; onClose: any }) => {
+const Modal = ({ onClose, toggle }: { toggle: () => void; onClose: () => void }) => {
   const modalRoot = document.getElementById("my-modal");
-  if (!modalRoot) {
-    return null;
-  }
+  if (!modalRoot) return null;
   return createPortal(
     <div className="fixed inset-0 bg-background/60 backdrop-blur-sm flex items-center justify-center z-[90]">
-      <div
-        className="bg-background/20 border border-accent/30 border-solid backdrop-blur-[6px]
-            py-8 px-6 xs:px-10 sm:px-16 rounded shadow-glass-inset text-center space-y-8
-            "
-      >
+      <div className="bg-background/20 border border-accent/30 border-solid backdrop-blur-[6px] py-8 px-6 xs:px-10 sm:px-16 rounded shadow-glass-inset text-center space-y-8">
         <p className="font-light">¿Deseas activar la música de fondo?</p>
         <div className="flex items-center justify-center space-x-4">
           <button
@@ -50,11 +44,10 @@ const Sound = () => {
       audioRef.current.play();
       setIsPlaying(true);
     }
-
     ["click", "keydown", "touchstart"].forEach((event) =>
       document.removeEventListener(event, handleFirstUserInteraction)
     );
-  }, [isPlaying, audioRef]);
+  }, [isPlaying]);
 
   useEffect(() => {
     const consent = localStorage.getItem("musicConsent");
@@ -63,11 +56,9 @@ const Sound = () => {
     if (
       consent &&
       consentTime &&
-      new Date(consentTime).getTime() + 3 * 24 * 60 * 60 * 1000 >
-        new Date().getTime()
+      new Date(consentTime).getTime() + 3 * 24 * 60 * 60 * 1000 > new Date().getTime()
     ) {
       setIsPlaying(consent === "true");
-
       if (consent === "true") {
         ["click", "keydown", "touchstart"].forEach((event) =>
           document.addEventListener(event, handleFirstUserInteraction)
@@ -78,19 +69,18 @@ const Sound = () => {
     }
   }, [handleFirstUserInteraction]);
 
-  // Reload audio when track changes
+  // FIX: add isPlaying to deps so effect re-runs correctly when track changes while playing
   useEffect(() => {
     if (audioRef.current && isPlaying) {
       audioRef.current.load();
       audioRef.current.play().catch(() => {});
     }
-  }, [currentTrack]);
+  }, [currentTrack, isPlaying]);
 
   const toggle = () => {
     const newState = !isPlaying;
-    setIsPlaying(!isPlaying);
-    if (audioRef.current)
-      newState ? audioRef.current.play() : audioRef.current.pause();
+    setIsPlaying(newState);
+    if (audioRef.current) newState ? audioRef.current.play() : audioRef.current.pause();
     localStorage.setItem("musicConsent", String(newState));
     localStorage.setItem("consentTime", new Date().toISOString());
     setShowModal(false);
@@ -101,7 +91,6 @@ const Sound = () => {
       {showModal && (
         <Modal onClose={() => setShowModal(false)} toggle={toggle} />
       )}
-
       <audio ref={audioRef} loop>
         <source src={currentTrack} type="audio/mpeg" />
         your browser does not support the audio element.
@@ -112,19 +101,13 @@ const Sound = () => {
         animate={{ scale: 1 }}
         transition={{ delay: 1 }}
         className="w-10 h-10 xs:w-14 xs:h-14 text-foreground rounded-full flex items-center justify-center cursor-pointer z-50 p-2.5 xs:p-4 custom-bg"
-        aria-label={"Sound control button"}
-        name={"Sound control button"}
+        aria-label="Sound control button"
+        name="Sound control button"
       >
         {isPlaying ? (
-          <Volume2
-            className="w-full h-full text-foreground group-hover:text-accent"
-            strokeWidth={1.5}
-          />
+          <Volume2 className="w-full h-full text-foreground group-hover:text-accent" strokeWidth={1.5} />
         ) : (
-          <VolumeX
-            className="w-full h-full text-foreground group-hover:text-accent"
-            strokeWidth={1.5}
-          />
+          <VolumeX className="w-full h-full text-foreground group-hover:text-accent" strokeWidth={1.5} />
         )}
       </motion.button>
     </div>

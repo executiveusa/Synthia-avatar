@@ -1,7 +1,7 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
 import { Lock, X } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useAvatarContext } from "@/context/AvatarContext";
 
@@ -11,15 +11,36 @@ function InviteOnlyModal() {
   const [error, setError] = useState(false);
   const [shake, setShake] = useState(false);
 
+  // FIX: store timeout in ref so we can clear on unmount / close
+  const shakeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (shakeTimeoutRef.current !== null) {
+        clearTimeout(shakeTimeoutRef.current);
+        shakeTimeoutRef.current = null;
+      }
+    };
+  }, []);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // No valid code yet — always show error
     setError(true);
     setShake(true);
-    setTimeout(() => setShake(false), 500);
+    if (shakeTimeoutRef.current !== null) clearTimeout(shakeTimeoutRef.current);
+    shakeTimeoutRef.current = setTimeout(() => {
+      setShake(false);
+      shakeTimeoutRef.current = null;
+    }, 500);
   };
 
   const handleClose = () => {
+    // FIX: clear pending shake timeout on close
+    if (shakeTimeoutRef.current !== null) {
+      clearTimeout(shakeTimeoutRef.current);
+      shakeTimeoutRef.current = null;
+    }
+    setShake(false);
     setCode("");
     setError(false);
     closeInviteModal();
@@ -48,7 +69,6 @@ function InviteOnlyModal() {
             transition={{ type: "spring", stiffness: 240, damping: 22 }}
             className="custom-bg rounded-lg p-8 max-w-sm w-full mx-4 space-y-5 relative"
           >
-            {/* Close button */}
             <button
               onClick={handleClose}
               className="absolute top-3 right-3 text-muted hover:text-accent transition-colors"
@@ -57,7 +77,6 @@ function InviteOnlyModal() {
               <X size={16} />
             </button>
 
-            {/* Icon */}
             <div className="flex flex-col items-center space-y-2">
               <div className="w-12 h-12 rounded-full custom-bg flex items-center justify-center">
                 <Lock className="text-accent" size={22} strokeWidth={1.5} />
@@ -70,7 +89,6 @@ function InviteOnlyModal() {
               </p>
             </div>
 
-            {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-3">
               <motion.div
                 animate={shake ? { x: [-8, 8, -6, 6, 0] } : { x: 0 }}

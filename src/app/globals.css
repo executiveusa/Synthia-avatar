@@ -30,26 +30,9 @@
   }
 }
 
-/* Glitter / shimmer text effect */
-@keyframes glitter-shine {
-  0%   { background-position: 0% center; }
-  100% { background-position: 200% center; }
-}
+/* glitter-shine, sparkle, shake are defined in tailwind.config.ts keyframes — no duplicate here */
 
-/* Sparkle dot pulse */
-@keyframes sparkle {
-  0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
-  50%       { opacity: 1; transform: scale(1) rotate(180deg); }
-}
-
-/* Button shake on locked click */
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  20%       { transform: translateX(-7px); }
-  40%       { transform: translateX(7px); }
-  60%       { transform: translateX(-5px); }
-  80%       { transform: translateX(5px); }
-}
+/* Button shake on locked click — referenced by Framer Motion directly, not as CSS class */
 
 .nameplate-text {
   background: linear-gradient(

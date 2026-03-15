@@ -14,8 +14,9 @@ import {
   User,
   Youtube,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import clsx from "clsx";
 import ResponsiveComponent from "../ResponsiveComponent";
 import { useAvatarContext } from "@/context/AvatarContext";
@@ -33,56 +34,52 @@ interface NavButtonProps {
 
 const getIcon = (icon: string) => {
   switch (icon) {
-    case "blog":
-      return <Newspaper className="w-full h-auto" strokeWidth={1.5} />;
-    case "about":
-      return <User className="w-full h-auto" strokeWidth={1.5} />;
-    case "projects":
-      return <Palette className="w-full h-auto" strokeWidth={1.5} />;
-    case "contact":
-      return <Phone className="w-full h-auto" strokeWidth={1.5} />;
-    case "github":
-      return <Github className="w-full h-auto" strokeWidth={1.5} />;
-    case "linkedin":
-      return <Linkedin className="w-full h-auto" strokeWidth={1.5} />;
-    case "twitter":
-      return <Twitter className="w-full h-auto" strokeWidth={1.5} />;
-    case "instagram":
-      return <Instagram className="w-full h-auto" strokeWidth={1.5} />;
-    case "youtube":
-      return <Youtube className="w-full h-auto" strokeWidth={1.5} />;
-    case "resume":
-      return <NotebookText className="w-full h-auto" strokeWidth={1.5} />;
-    default:
-      return <Home className="w-full h-auto" strokeWidth={1.5} />;
+    case "blog":      return <Newspaper  className="w-full h-auto" strokeWidth={1.5} />;
+    case "about":     return <User       className="w-full h-auto" strokeWidth={1.5} />;
+    case "projects":  return <Palette    className="w-full h-auto" strokeWidth={1.5} />;
+    case "contact":   return <Phone      className="w-full h-auto" strokeWidth={1.5} />;
+    case "github":    return <Github     className="w-full h-auto" strokeWidth={1.5} />;
+    case "linkedin":  return <Linkedin   className="w-full h-auto" strokeWidth={1.5} />;
+    case "twitter":   return <Twitter    className="w-full h-auto" strokeWidth={1.5} />;
+    case "instagram": return <Instagram  className="w-full h-auto" strokeWidth={1.5} />;
+    case "youtube":   return <Youtube    className="w-full h-auto" strokeWidth={1.5} />;
+    case "resume":    return <NotebookText className="w-full h-auto" strokeWidth={1.5} />;
+    default:          return <Home       className="w-full h-auto" strokeWidth={1.5} />;
   }
 };
 
 const item = {
   hidden: { scale: 0 },
-  show: { scale: 1 },
+  show:   { scale: 1 },
 };
 
 function NavButton({
-  x,
-  y,
-  label,
-  link,
-  icon,
-  newTab,
-  labelDirection,
-  isLocked,
+  x, y, label, link, icon, newTab, labelDirection, isLocked,
 }: NavButtonProps) {
   const { triggerNoReaction, openInviteModal } = useAvatarContext();
   const [shaking, setShaking] = useState(false);
 
-  const handleLockedClick = (e: React.MouseEvent | React.TouchEvent) => {
+  // FIX: store timeout in ref to clear on unmount
+  const shakeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (shakeTimeoutRef.current !== null) clearTimeout(shakeTimeoutRef.current);
+    };
+  }, []);
+
+  // FIX: single handler (no onTouchStart duplicate) — onClick covers both mouse and touch
+  const handleLockedClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     triggerNoReaction();
     openInviteModal();
     setShaking(true);
-    setTimeout(() => setShaking(false), 500);
+    if (shakeTimeoutRef.current !== null) clearTimeout(shakeTimeoutRef.current);
+    shakeTimeoutRef.current = setTimeout(() => {
+      setShaking(false);
+      shakeTimeoutRef.current = null;
+    }, 500);
   };
 
   const iconContent = (spinning: boolean) => (
@@ -96,7 +93,6 @@ function NavButton({
     >
       {getIcon(icon)}
 
-      {/* Lock overlay for locked buttons */}
       {isLocked && (
         <span className="absolute bottom-1 right-1 text-accent/70">
           <Lock size={9} strokeWidth={2.5} />
@@ -122,63 +118,49 @@ function NavButton({
   const buttonClasses =
     "text-foreground rounded-full flex items-center justify-center custom-bg";
 
+  // FIX: use next/link for internal routes; plain <a> only for external
+  const isInternal = !newTab && link.startsWith("/");
+
   return (
     <ResponsiveComponent>
       {({ size }) => {
-        return size && size >= 480 ? (
+        const spinning = !!(size && size >= 480);
+        return (
           <div
-            className="absolute cursor-pointer z-50"
-            style={{ transform: `translate(${x}, ${y})` }}
+            className={clsx(
+              "cursor-pointer z-50",
+              spinning ? "absolute" : "w-fit"
+            )}
+            style={spinning ? { transform: `translate(${x}, ${y})` } : undefined}
           >
             {isLocked ? (
               <motion.button
                 variants={item}
                 onClick={handleLockedClick}
-                onTouchStart={handleLockedClick}
                 animate={shaking ? { x: [-7, 7, -5, 5, 0] } : { x: 0 }}
                 transition={shaking ? { duration: 0.4 } : {}}
                 className={buttonClasses}
                 aria-label={label}
               >
-                {iconContent(true)}
+                {iconContent(spinning)}
               </motion.button>
+            ) : isInternal ? (
+              // FIX: next/link for internal navigation (no full reload)
+              <Link href={link} aria-label={label}>
+                <motion.span variants={item} className={buttonClasses}>
+                  {iconContent(spinning)}
+                </motion.span>
+              </Link>
             ) : (
               <motion.a
                 variants={item}
                 href={link}
-                target={newTab ? "_blank" : "_self"}
-                rel={newTab ? "noopener noreferrer" : undefined}
+                target="_blank"
+                rel="noopener noreferrer"
                 className={buttonClasses}
                 aria-label={label}
               >
-                {iconContent(true)}
-              </motion.a>
-            )}
-          </div>
-        ) : (
-          <div className="w-fit cursor-pointer z-50">
-            {isLocked ? (
-              <motion.button
-                variants={item}
-                onClick={handleLockedClick}
-                onTouchStart={handleLockedClick}
-                animate={shaking ? { x: [-7, 7, -5, 5, 0] } : { x: 0 }}
-                transition={shaking ? { duration: 0.4 } : {}}
-                className={buttonClasses}
-                aria-label={label}
-              >
-                {iconContent(false)}
-              </motion.button>
-            ) : (
-              <motion.a
-                variants={item}
-                href={link}
-                target={newTab ? "_blank" : "_self"}
-                rel={newTab ? "noopener noreferrer" : undefined}
-                className={buttonClasses}
-                aria-label={label}
-              >
-                {iconContent(false)}
+                {iconContent(spinning)}
               </motion.a>
             )}
           </div>
