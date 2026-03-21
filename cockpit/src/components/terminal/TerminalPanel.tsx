@@ -23,9 +23,6 @@ export function TerminalPanel() {
       const { FitAddon } = await import('@xterm/addon-fit')
       const { WebLinksAddon } = await import('@xterm/addon-web-links')
 
-      // Import xterm CSS
-      await import('@xterm/xterm/css/xterm.css' as string)
-
       term = new Terminal({
         theme: {
           background:    '#08080A',
