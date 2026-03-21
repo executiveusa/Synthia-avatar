@@ -7,10 +7,16 @@ import { useAvatarContext } from "@/context/AvatarContext";
 
 const Modal = ({ onClose, toggle }: { toggle: () => void; onClose: () => void }) => {
   const modalRoot = document.getElementById("my-modal");
-  if (!modalRoot) return null;
+  if (!modalRoot) {
+    return null;
+  }
   return createPortal(
     <div className="fixed inset-0 bg-background/60 backdrop-blur-sm flex items-center justify-center z-[90]">
-      <div className="bg-background/20 border border-accent/30 border-solid backdrop-blur-[6px] py-8 px-6 xs:px-10 sm:px-16 rounded shadow-glass-inset text-center space-y-8">
+      <div
+        className="bg-background/20 border border-accent/30 border-solid backdrop-blur-[6px]
+            py-8 px-6 xs:px-10 sm:px-16 rounded shadow-glass-inset text-center space-y-8
+            "
+      >
         <p className="font-light">¿Deseas activar la música de fondo?</p>
         <div className="flex items-center justify-center space-x-4">
           <button
@@ -56,7 +62,8 @@ const Sound = () => {
     if (
       consent &&
       consentTime &&
-      new Date(consentTime).getTime() + 3 * 24 * 60 * 60 * 1000 > new Date().getTime()
+      new Date(consentTime).getTime() + 3 * 24 * 60 * 60 * 1000 >
+        new Date().getTime()
     ) {
       setIsPlaying(consent === "true");
       if (consent === "true") {
@@ -69,13 +76,13 @@ const Sound = () => {
     }
   }, [handleFirstUserInteraction]);
 
-  // FIX: add isPlaying to deps so effect re-runs correctly when track changes while playing
+  // Reload audio when track changes
   useEffect(() => {
     if (audioRef.current && isPlaying) {
       audioRef.current.load();
       audioRef.current.play().catch(() => {});
     }
-  }, [currentTrack, isPlaying]);
+  }, [currentTrack]);
 
   const toggle = () => {
     const newState = !isPlaying;
