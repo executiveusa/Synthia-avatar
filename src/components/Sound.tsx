@@ -6,8 +6,7 @@ import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import { useAvatarContext } from "@/context/AvatarContext";
 
-const Modal = ({ onClose, toggle }: { toggle: any; onClose: any }) => {
-  const t = useTranslations("Sound");
+const Modal = ({ onClose, toggle }: { toggle: () => void; onClose: () => void }) => {
   const modalRoot = document.getElementById("my-modal");
   if (!modalRoot) {
     return null;
@@ -52,11 +51,10 @@ const Sound = () => {
       audioRef.current.play();
       setIsPlaying(true);
     }
-
     ["click", "keydown", "touchstart"].forEach((event) =>
       document.removeEventListener(event, handleFirstUserInteraction)
     );
-  }, [isPlaying, audioRef]);
+  }, [isPlaying]);
 
   useEffect(() => {
     const consent = localStorage.getItem("musicConsent");
@@ -69,7 +67,6 @@ const Sound = () => {
         new Date().getTime()
     ) {
       setIsPlaying(consent === "true");
-
       if (consent === "true") {
         ["click", "keydown", "touchstart"].forEach((event) =>
           document.addEventListener(event, handleFirstUserInteraction)
@@ -90,9 +87,8 @@ const Sound = () => {
 
   const toggle = () => {
     const newState = !isPlaying;
-    setIsPlaying(!isPlaying);
-    if (audioRef.current)
-      newState ? audioRef.current.play() : audioRef.current.pause();
+    setIsPlaying(newState);
+    if (audioRef.current) newState ? audioRef.current.play() : audioRef.current.pause();
     localStorage.setItem("musicConsent", String(newState));
     localStorage.setItem("consentTime", new Date().toISOString());
     setShowModal(false);
@@ -103,7 +99,6 @@ const Sound = () => {
       {showModal && (
         <Modal onClose={() => setShowModal(false)} toggle={toggle} />
       )}
-
       <audio ref={audioRef} loop>
         <source src={currentTrack} type="audio/mpeg" />
         your browser does not support the audio element.
@@ -114,19 +109,13 @@ const Sound = () => {
         animate={{ scale: 1 }}
         transition={{ delay: 1 }}
         className="w-10 h-10 xs:w-14 xs:h-14 text-foreground rounded-full flex items-center justify-center cursor-pointer z-50 p-2.5 xs:p-4 custom-bg"
-        aria-label={"Sound control button"}
-        name={"Sound control button"}
+        aria-label="Sound control button"
+        name="Sound control button"
       >
         {isPlaying ? (
-          <Volume2
-            className="w-full h-full text-foreground group-hover:text-accent"
-            strokeWidth={1.5}
-          />
+          <Volume2 className="w-full h-full text-foreground group-hover:text-accent" strokeWidth={1.5} />
         ) : (
-          <VolumeX
-            className="w-full h-full text-foreground group-hover:text-accent"
-            strokeWidth={1.5}
-          />
+          <VolumeX className="w-full h-full text-foreground group-hover:text-accent" strokeWidth={1.5} />
         )}
       </motion.button>
     </div>
