@@ -4,16 +4,17 @@ import { Lock, X } from "lucide-react";
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
 import { useAvatarContext } from "@/context/AvatarContext";
+import { useTranslations } from "next-intl";
 
 function InviteOnlyModal() {
   const { showInviteModal, closeInviteModal } = useAvatarContext();
   const [code, setCode] = useState("");
   const [error, setError] = useState(false);
   const [shake, setShake] = useState(false);
+  const t = useTranslations("InviteModal");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // No valid code yet — always show error
     setError(true);
     setShake(true);
     setTimeout(() => setShake(false), 500);
@@ -52,7 +53,7 @@ function InviteOnlyModal() {
             <button
               onClick={handleClose}
               className="absolute top-3 right-3 text-muted hover:text-accent transition-colors"
-              aria-label="Cerrar"
+              aria-label={t("closeLabel")}
             >
               <X size={16} />
             </button>
@@ -63,10 +64,10 @@ function InviteOnlyModal() {
                 <Lock className="text-accent" size={22} strokeWidth={1.5} />
               </div>
               <h2 className="text-foreground font-semibold text-lg text-center">
-                Solo por invitación
+                {t("title")}
               </h2>
               <p className="text-muted text-sm text-center leading-relaxed">
-                Esta sección es exclusiva. Ingresa tu código de acceso para continuar.
+                {t("description")}
               </p>
             </div>
 
@@ -83,12 +84,12 @@ function InviteOnlyModal() {
                     setCode(e.target.value);
                     setError(false);
                   }}
-                  placeholder="Código de invitación"
+                  placeholder={t("placeholder")}
                   className="w-full bg-background/30 border border-accent/30 rounded px-4 py-2.5 text-foreground text-sm placeholder-muted focus:outline-none focus:border-accent/70 transition-colors"
                 />
                 {error && (
                   <p className="text-red-400 text-xs mt-1 text-center">
-                    Código incorrecto. Solicita una invitación.
+                    {t("error")}
                   </p>
                 )}
               </motion.div>
@@ -97,12 +98,12 @@ function InviteOnlyModal() {
                 type="submit"
                 className="w-full py-2.5 border border-accent/40 rounded text-accent text-sm font-medium hover:shadow-glass-sm hover:border-accent/70 transition-all"
               >
-                Acceder
+                {t("submitBtn")}
               </button>
             </form>
 
             <p className="text-muted text-[10px] text-center tracking-wide">
-              © 2026 Kupuri Media · Agent Alex™
+              {t("footer")}
             </p>
           </motion.div>
         </motion.div>

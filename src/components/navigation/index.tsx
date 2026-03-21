@@ -3,6 +3,7 @@
 import { BtnList } from "@/data";
 import React from "react";
 import NavButton from "./NavButton";
+import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import useScreenSize from "../hooks/useScreenSize";
 import ResponsiveComponent from "../ResponsiveComponent";
@@ -18,10 +19,16 @@ const container = {
 };
 
 function Navigation() {
+  const t = useTranslations("Nav");
   const angleIncrement = 360 / BtnList.length;
   const size = useScreenSize()!;
   const isLarge = size >= 1024;
   const isMedium = size >= 768;
+
+  const translatedBtnList = BtnList.map((btn) => ({
+    ...btn,
+    label: t(btn.icon as any) ?? btn.label,
+  }));
 
   return (
     <div className="fixed h-screen flex items-center justify-center w-full">
@@ -34,7 +41,7 @@ function Navigation() {
               animate="show"
               className="w-max flex items-center justify-center relative hover:pause animate-spin-slow group"
             >
-              {BtnList.map((btn, index) => {
+              {translatedBtnList.map((btn, index) => {
                 const angleRad = (index * angleIncrement * Math.PI) / 180;
                 const radius = isLarge
                   ? "calc(20vw - 1rem)"
@@ -64,7 +71,7 @@ function Navigation() {
                 animate="show"
                 className="w-full px-2.5 xs:p-0 xs:w-max flex flex-col space-y-4 item-start xs:items-center justify-center relative  group xs:hidden"
               >
-                {BtnList.slice(0, BtnList.length / 2).map((btn) => {
+                {translatedBtnList.slice(0, translatedBtnList.length / 2).map((btn) => {
                   return (
                     <NavButton
                       key={btn.label}
@@ -83,7 +90,7 @@ function Navigation() {
                 animate="show"
                 className="w-full px-2.5 xs:p-0 xs:w-max flex flex-col space-y-4 items-end xs:items-center justify-center relative group xs:hidden"
               >
-                {BtnList.slice(BtnList.length / 2, BtnList.length).map(
+                {translatedBtnList.slice(translatedBtnList.length / 2, translatedBtnList.length).map(
                   (btn) => {
                     return (
                       <NavButton
