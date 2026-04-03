@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import clsx from "clsx";
 import ResponsiveComponent from "../ResponsiveComponent";
 import { useAvatarContext } from "@/context/AvatarContext";
@@ -60,7 +61,7 @@ const getIcon = (icon: string) => {
 
 const item = {
   hidden: { scale: 0 },
-  show: { scale: 1 },
+  show:   { scale: 1 },
 };
 
 function NavButton({
@@ -125,10 +126,14 @@ function NavButton({
   return (
     <ResponsiveComponent>
       {({ size }) => {
-        return size && size >= 480 ? (
+        const spinning = !!(size && size >= 480);
+        return (
           <div
-            className="absolute cursor-pointer z-50"
-            style={{ transform: `translate(${x}, ${y})` }}
+            className={clsx(
+              "cursor-pointer z-50",
+              spinning ? "absolute" : "w-fit"
+            )}
+            style={spinning ? { transform: `translate(${x}, ${y})` } : undefined}
           >
             {isLocked ? (
               <motion.button
