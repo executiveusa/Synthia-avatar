@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { useAvatarContext } from "@/context/AvatarContext";
 
 const Modal = ({ onClose, toggle }: { toggle: () => void; onClose: () => void }) => {
+  const t = useTranslations("Sound");
   const modalRoot = document.getElementById("my-modal");
   if (!modalRoot) {
     return null;
