@@ -11,6 +11,7 @@ import { useAvatarContext } from "@/context/AvatarContext";
 
 export default function WizardModel(props: Record<string, unknown>) {
   const { nodes, materials } = useGLTF("/models/wizard-transformed.glb");
+  const getMat = (name: string) => materials[name] as THREE.MeshStandardMaterial | undefined;
   const modelRef = useRef<THREE.Group>(null!);
   const { isReacting } = useAvatarContext();
 
