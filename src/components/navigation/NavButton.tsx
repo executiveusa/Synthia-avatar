@@ -127,7 +127,7 @@ function NavButton({
     <ResponsiveComponent>
       {({ size }) => {
         const spinning = !!(size && size >= 480);
-        return (
+        return spinning ? (
           <div
             className={clsx(
               "cursor-pointer z-50",
