@@ -10,6 +10,8 @@ import React, {
 interface AvatarContextType {
   isReacting: boolean;
   triggerNoReaction: () => void;
+  isApproving: boolean;
+  triggerYesReaction: () => void;
   showInviteModal: boolean;
   openInviteModal: () => void;
   closeInviteModal: () => void;
@@ -21,11 +23,13 @@ const AvatarContext = createContext<AvatarContextType | null>(null);
 
 export function AvatarProvider({ children }: { children: React.ReactNode }) {
   const [isReacting, setIsReacting] = useState(false);
+  const [isApproving, setIsApproving] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(
     "/audio/birds39-forest-20772.mp3"
   );
   const reactionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const approveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const triggerNoReaction = useCallback(() => {
     setIsReacting(true);
@@ -33,6 +37,15 @@ export function AvatarProvider({ children }: { children: React.ReactNode }) {
     reactionTimer.current = setTimeout(() => {
       setIsReacting(false);
     }, 1600);
+  }, []);
+
+  // "Yes" gesture: index finger dips 3× (forward pitch) over 1800ms
+  const triggerYesReaction = useCallback(() => {
+    setIsApproving(true);
+    if (approveTimer.current) clearTimeout(approveTimer.current);
+    approveTimer.current = setTimeout(() => {
+      setIsApproving(false);
+    }, 1800);
   }, []);
 
   const openInviteModal = useCallback(() => setShowInviteModal(true), []);
@@ -43,6 +56,8 @@ export function AvatarProvider({ children }: { children: React.ReactNode }) {
       value={{
         isReacting,
         triggerNoReaction,
+        isApproving,
+        triggerYesReaction,
         showInviteModal,
         openInviteModal,
         closeInviteModal,

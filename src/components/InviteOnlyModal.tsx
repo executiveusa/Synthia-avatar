@@ -6,8 +6,10 @@ import { createPortal } from "react-dom";
 import { useAvatarContext } from "@/context/AvatarContext";
 import { useTranslations } from "next-intl";
 
+const INVITE_CODE = process.env.NEXT_PUBLIC_INVITE_CODE ?? "kupuri2006";
+
 function InviteOnlyModal() {
-  const { showInviteModal, closeInviteModal } = useAvatarContext();
+  const { showInviteModal, closeInviteModal, triggerNoReaction, triggerYesReaction } = useAvatarContext();
   const [code, setCode] = useState("");
   const [error, setError] = useState(false);
   const [shake, setShake] = useState(false);
@@ -15,9 +17,21 @@ function InviteOnlyModal() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError(true);
-    setShake(true);
-    setTimeout(() => setShake(false), 500);
+    if (code === INVITE_CODE) {
+      // Correct code: "yes" finger dip gesture, then close
+      triggerYesReaction();
+      setError(false);
+      setTimeout(() => {
+        setCode("");
+        closeInviteModal();
+      }, 900);
+    } else {
+      // Wrong code: Mexican "no" finger wag
+      triggerNoReaction();
+      setError(true);
+      setShake(true);
+      setTimeout(() => setShake(false), 500);
+    }
   };
 
   const handleClose = () => {
