@@ -41,10 +41,10 @@ function AlexNameplate() {
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ type: "spring", stiffness: 120, damping: 14, delay: 1.2 }}
-      className="fixed bottom-12 left-1/2 -translate-x-1/2 z-20 pointer-events-auto select-none"
+      className="fixed bottom-16 left-1/2 -translate-x-1/2 z-20 pointer-events-auto select-none"
     >
       <div
-        className="flex flex-col items-center justify-center gap-1 cursor-pointer"
+        className="flex flex-col items-center justify-center gap-0.5 cursor-pointer"
         onClick={() => {
           const isYes = Math.random() > 0.5;
           if (isYes) {
