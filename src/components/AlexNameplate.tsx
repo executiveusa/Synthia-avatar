@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import React from "react";
 import { useTranslations } from "next-intl";
+import { useAvatarContext } from "@/context/AvatarContext";
 
 const sparkles = [
   { top: "-4px", left: "10%", delay: "0s", size: "3px" },
@@ -48,16 +49,25 @@ const AgentAlexLogo = () => (
 
 function AlexNameplate() {
   const t = useTranslations("Nameplate");
+  const { triggerNoReaction, triggerYesReaction } = useAvatarContext();
 
   return (
     <motion.div
       initial={{ y: 40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ type: "spring", stiffness: 120, damping: 14, delay: 1.2 }}
-      className="fixed bottom-[22%] left-1/2 -translate-x-1/2 z-20 pointer-events-none select-none"
+      className="fixed bottom-8 left-1/2 -translate-x-1/2 z-20 pointer-events-auto select-none"
     >
       <div
-        className="relative px-4 py-1.5 rounded-sm border border-yellow-600/50"
+        className="relative px-4 py-1.5 rounded-sm border border-yellow-600/50 cursor-pointer group"
+        onClick={() => {
+          const isYes = Math.random() > 0.5;
+          if (isYes) {
+            triggerYesReaction();
+          } else {
+            triggerNoReaction();
+          }
+        }}
         style={{
           background:
             "linear-gradient(180deg, rgba(50,40,10,0.85) 0%, rgba(20,15,5,0.95) 100%)",
