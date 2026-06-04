@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useAvatarContext } from "@/context/AvatarContext";
 
-const DASHBOARD_CODE = "kupuri2026";
+const DASHBOARD_CODE = process.env.NEXT_PUBLIC_INVITE_CODE ?? "kupuri2006";
 
 const tracks = [
   { label: "Bosque (predeterminado)", path: "/audio/birds39-forest-20772.mp3" },

@@ -14,7 +14,7 @@ export default function WizardModel(props: Record<string, unknown>) {
   const getMat = (name: string) => materials[name] as THREE.MeshStandardMaterial | undefined;
   const sharedProps = {};
   const modelRef = useRef<THREE.Group>(null!);
-  const { isReacting } = useAvatarContext();
+  const { isReacting, isApproving } = useAvatarContext();
 
   useFrame((state) => {
     if (!modelRef.current) return;
@@ -22,14 +22,20 @@ export default function WizardModel(props: Record<string, unknown>) {
     modelRef.current.position.y =
       -1.5 + Math.sin(state.clock.elapsedTime) * 0.15;
 
-    // Mexican "no" finger-wag: rapid Y-axis oscillation when reacting
+    // Mexican "no" finger-wag: rapid Y-axis oscillation
     if (isReacting) {
       modelRef.current.rotation.y =
         Math.sin(state.clock.elapsedTime * 11) * 0.28;
+      modelRef.current.rotation.x += (0.25 - modelRef.current.rotation.x) * 0.1;
+    } else if (isApproving) {
+      // Mexican "yes" gesture: index finger dip 3× (X-axis pitch forward/back)
+      modelRef.current.rotation.x =
+        0.25 + Math.sin(state.clock.elapsedTime * 10) * 0.22;
+      modelRef.current.rotation.y += (0 - modelRef.current.rotation.y) * 0.12;
     } else {
       // Smooth return to base rotation
-      modelRef.current.rotation.y +=
-        (0 - modelRef.current.rotation.y) * 0.12;
+      modelRef.current.rotation.y += (0 - modelRef.current.rotation.y) * 0.12;
+      modelRef.current.rotation.x += (0.25 - modelRef.current.rotation.x) * 0.1;
     }
   });
 
