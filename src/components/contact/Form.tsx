@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import emailjs from "@emailjs/browser";
 import { Toaster, toast } from "sonner";
 import { motion } from "framer-motion";
 
@@ -26,40 +25,43 @@ export default function Form() {
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState({ message: "" });
 
-  const sendEmail = (params: any) => {
-    console.log("params", params);
+  const gatewayUrl = process.env.NEXT_PUBLIC_ALEX_GATEWAY_URL;
+
+  const sendEmail = async (params: {
+    from_name: string;
+    reply_to: string;
+    message: string;
+  }) => {
     const toastId = toast.loading("Sending your message, please wait...");
-    emailjs
-      .send(
-        process.env.NEXT_PUBLIC_SERVICE_ID!,
-        process.env.NEXT_PUBLIC_TEMPLATE_ID!,
-        params,
-        {
-          publicKey: process.env.NEXT_PUBLIC_PUBLIC_KEY!,
-          limitRate: {
-            throttle: 10000, // you can not send more then 1 email per 5 seconds
-          },
-        }
-      )
-      .then(
-        () => {
-          toast.success(
-            "I have received your message, I will get back to you soon!",
-            {
-              id: toastId,
-            }
-          );
-        },
-        (error) => {
-          console.log("error", error);
-          toast.error(
-            "There was an error sending your message, please try again later!",
-            {
-              id: toastId,
-            }
-          );
-        }
+
+    // Step 3 seam: contact messages route to the Alex gateway (Step 4), not
+    // EmailJS. Until the gateway endpoint is configured, fail honestly.
+    if (!gatewayUrl) {
+      toast.error(
+        "Message service is not configured yet, please try again later!",
+        { id: toastId }
       );
+      return;
+    }
+
+    try {
+      const res = await fetch(`${gatewayUrl}/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(params),
+      });
+      if (!res.ok) throw new Error(`gateway responded ${res.status}`);
+      toast.success(
+        "I have received your message, I will get back to you soon!",
+        { id: toastId }
+      );
+    } catch (error) {
+      console.log("error", error);
+      toast.error(
+        "There was an error sending your message, please try again later!",
+        { id: toastId }
+      );
+    }
   };
 
   const onSubmit = () => {
@@ -81,7 +83,7 @@ export default function Form() {
     }
 
     const templateParams = {
-      to_name: "Amit Amrutiya",
+      to_name: "Alex",
       from_name: name,
       reply_to: email,
       message: message,
