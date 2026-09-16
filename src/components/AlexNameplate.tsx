@@ -50,12 +50,13 @@ function AlexNameplate() {
   const t = useTranslations("Nameplate");
 
   return (
-    <motion.div
-      initial={{ y: 40, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 120, damping: 14, delay: 1.2 }}
-      className="fixed bottom-[22%] left-1/2 -translate-x-1/2 z-20 pointer-events-none select-none"
-    >
+    <div className="fixed bottom-[22%] left-1/2 -translate-x-1/2 z-20 pointer-events-none select-none">
+      <motion.div
+        initial={{ y: 40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 120, damping: 14, delay: 1.2 }}
+        style={{ scale: 0.85, transformOrigin: "center bottom" }}
+      >
       <div
         className="relative px-4 py-1.5 rounded-sm border border-yellow-600/50"
         style={{
@@ -121,8 +122,9 @@ function AlexNameplate() {
               "linear-gradient(90deg, transparent, #FFD700, transparent)",
           }}
         />
-      </div>
-    </motion.div>
+        </div>
+      </motion.div>
+    </div>
   );
 }
 
