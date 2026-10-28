@@ -1,0 +1,80 @@
+{
+  "root": {
+    "counts": {
+      "info": 0,
+      "low": 0,
+      "moderate": 2,
+      "high": 0,
+      "critical": 0,
+      "total": 2
+    },
+    "vulnerabilities": {
+      "@react-three/drei": {
+        "name": "@react-three/drei",
+        "severity": "moderate",
+        "isDirect": true,
+        "via": [
+          "uuid"
+        ],
+        "effects": [],
+        "range": "9.85.0 - 9.120.8",
+        "nodes": [
+          "node_modules/@react-three/drei"
+        ],
+        "fixAvailable": true
+      },
+      "uuid": {
+        "name": "uuid",
+        "severity": "moderate",
+        "isDirect": false,
+        "via": [
+          {
+            "source": 1119441,
+            "name": "uuid",
+            "dependency": "uuid",
+            "title": "uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided",
+            "url": "https://github.com/advisories/GHSA-w5hq-g745-h8pq",
+            "severity": "moderate",
+            "cwe": [
+              "CWE-787",
+              "CWE-1285"
+            ],
+            "cvss": {
+              "score": 7.5,
+              "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N"
+            },
+            "range": "<11.1.1"
+          }
+        ],
+        "effects": [
+          "@react-three/drei"
+        ],
+        "range": "<11.1.1",
+        "nodes": [
+          "node_modules/uuid"
+        ],
+        "fixAvailable": true
+      }
+    }
+  },
+  "cockpit": {
+    "counts": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "vulnerabilities": {}
+  },
+  "assessment": {
+    "state": "SECURITY_FINDING_UNRESOLVED",
+    "finding": "Remaining root moderate uuid buffer-bounds advisory is not marked fixed. Three dependencies remain unchanged to preserve compatibility. Observed drei Cloud import uses v4; full affected-call reachability review is still pending.",
+    "frameworkSource": "https://nextjs.org/blog/nextjs-security-update-october-14-2026",
+    "narrowOverrides": {
+      "next -> postcss": "8.5.32",
+      "minimatch@3.1.5 -> brace-expansion": "1.1.21"
+    }
+  }
+}

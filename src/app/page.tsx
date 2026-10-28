@@ -1,7 +1,7 @@
 import Image from "next/image";
 import bg from "../../public/background/home-background.png";
 import RenderModel from "@/components/RenderModel";
-import WizardModel from "@/components/models/Wizard";
+import { WizardModel } from "@/components/models/ClientModels";
 import Navigation from "@/components/navigation";
 import AlexNameplate from "@/components/AlexNameplate";
 import AgentAlexNFTCard from "@/components/AgentAlexNFTCard";

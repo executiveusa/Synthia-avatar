@@ -1,0 +1,128 @@
+{
+  "schema": "kupuri.backend-verification/1.0",
+  "repository": "executiveusa/Synthia-avatar",
+  "baselineCommit": "ae4e9487147d0300f77ffd602b0676c7d10eae3d",
+  "baselineTree": "cc8117aab13993abc16d10c22ab19390b5f03a74",
+  "state": "READY FOR PREVIEW",
+  "changedFiles": [
+    "cockpit/src/app/api/alex/route.ts",
+    "src/components/contact/Form.tsx",
+    "src/lib/contact.mjs",
+    "cockpit/tests/alex-route.test.mjs",
+    "tests/contact-persistence.test.mjs",
+    "package.json",
+    "package-lock.json",
+    "cockpit/package.json",
+    "cockpit/package-lock.json",
+    "tsconfig.json",
+    "cockpit/tsconfig.json",
+    "src/app/page.tsx",
+    "src/app/about/page.tsx",
+    "src/app/projects/page.tsx",
+    "src/components/RenderModel.tsx",
+    "src/components/CanvasScene.tsx",
+    "src/components/models/ClientModels.tsx",
+    "docs/backend-safety.md",
+    "docs/backend-verification.json",
+    "docs/backend-dependency-audit.json",
+    ".github/workflows/backend-checks.yml"
+  ],
+  "tests": {
+    "command": "node --test tests/contact-persistence.test.mjs cockpit/tests/alex-route.test.mjs",
+    "node": "24.22.1",
+    "passed": 6,
+    "failed": 0,
+    "proof": "Actual retired route execution, mocked contact HTTP contracts and timeout, plus one static component-wiring assertion",
+    "strictTypeScript": "PASS in full root and cockpit Next builds",
+    "visualClassComparison": "PASS: className values unchanged on all touched existing TSX pages/components; CanvasScene is byte-identical to baseline RenderModel implementation",
+    "wholeNextBuild": {
+      "root": "PASS: Next 15.5.28, compilation, lint/typecheck, 10 generated pages",
+      "cockpit": "PASS: Next 15.5.28, compilation, lint/typecheck, 6 generated pages/routes"
+    },
+    "browserInteraction": "BLOCKED: no installed browser; Playwright CDN browser archive downloads were truncated. No hydration, WebGL or browser contact proof claimed.",
+    "production": "NOT VERIFIED",
+    "localProductionServer": [
+      {
+        "port": 38191,
+        "path": "/",
+        "status": 200,
+        "html": true
+      },
+      {
+        "port": 38191,
+        "path": "/contact",
+        "status": 200,
+        "html": true
+      },
+      {
+        "port": 38191,
+        "path": "/about",
+        "status": 200,
+        "html": true
+      },
+      {
+        "port": 38191,
+        "path": "/projects",
+        "status": 200,
+        "html": true
+      },
+      {
+        "port": 38192,
+        "path": "/",
+        "status": 200,
+        "html": true
+      },
+      {
+        "port": 38192,
+        "path": "/cockpit",
+        "status": 200,
+        "html": true
+      },
+      {
+        "port": 38192,
+        "path": "/api/alex",
+        "method": "POST",
+        "status": 410,
+        "error": "legacy_proxy_retired"
+      }
+    ],
+    "knownWarnings": [
+      "Existing Sound.tsx useEffect dependency warning",
+      "Cockpit multiple lockfiles tracing-root warning",
+      "next-intl webpack dependency-cache warning"
+    ],
+    "dependencyAudit": {
+      "root": {
+        "high": 0,
+        "critical": 0,
+        "moderate": 2,
+        "underlyingAdvisory": "GHSA-w5hq-g745-h8pq via @react-three/drei -> uuid@9.0.1"
+      },
+      "cockpit": {
+        "total": 0
+      }
+    },
+    "lockfileInstalls": {
+      "root": "PASS npm ci --ignore-scripts --no-audit --no-fund",
+      "cockpit": "PASS npm ci --ignore-scripts --no-audit --no-fund"
+    },
+    "nativeCi": "Workflow added; actual remote run must be read back separately."
+  },
+  "boundaries": {
+    "modelCalls": 0,
+    "remoteWrites": 0,
+    "deployments": 0,
+    "secretsStored": false,
+    "visualDesignChanges": false,
+    "instinctBridge": "Not implemented without a verified existing Instinct contract; legacy cockpit chat returns fixed HTTP 410",
+    "framework": "Root and cockpit exact Next/eslint-config-next 15.5.28; browser React 18 and Three stack retained. Existing Canvas and all three GLTF models load only in browser."
+  },
+  "serverAcceptance": [
+    "Reproduce npm ci and builds on exact committed revision; run real-browser hydration, WebGL, mobile and contact interaction tests",
+    "Resolve existing template and GLB licensing blockers before any public release",
+    "Deploy matching private gateway /contact adapter and exact CORS origin",
+    "Verify real form persistence, failure retention and duplicate-click protection",
+    "Connect existing Instinct Alex only through its verified authenticated action contract"
+  ],
+  "rollback": "Revert contact/helper changes if needed; preserve stored inquiries and retain retirement of the unsafe funded proxy"
+}
