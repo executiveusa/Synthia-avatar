@@ -1,21 +1,18 @@
 "use client";
-import { Environment } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
-import clsx from "clsx";
-import React, { Suspense } from "react";
+import dynamic from "next/dynamic";
+import React from "react";
 
 interface RenderModelProps {
   children: React.ReactNode;
   className?: string;
 }
 
-function RenderModel({ children, className }: RenderModelProps) {
-  return (
-    <Canvas className={clsx("w-screen -z-10 h-screen relative", className)}>
-      <Suspense fallback={null}>{children}</Suspense>
-      <Environment preset="dawn" />
-    </Canvas>
-  );
+// R3F 8 uses the React 18 reconciler. Next's server rendering must not execute
+// this browser-only Canvas module; browser React and every scene prop stay intact.
+const CanvasScene = dynamic(() => import("./CanvasScene"), { ssr: false });
+
+function RenderModel(props: RenderModelProps) {
+  return <CanvasScene {...props} />;
 }
 
 export default RenderModel;

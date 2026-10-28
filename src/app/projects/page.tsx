@@ -3,11 +3,7 @@ import bg from "../../../public/background/projects-background.png";
 import ProjectList from "@/components/projects";
 import { projectsData } from "@/data";
 import RenderModel from "@/components/RenderModel";
-import dynamic from "next/dynamic";
-
-const StaffModel = dynamic(() => import("@/components/models/Staff"), {
-  ssr: false,
-});
+import { StaffModel } from "@/components/models/ClientModels";
 
 export const metadata = {
   title: "Projects",

@@ -1,7 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Toaster, toast } from "sonner";
 import { motion } from "framer-motion";
+import { persistContact } from "../../lib/contact.mjs";
 
 const container = {
   hidden: { opacity: 0 },
@@ -24,6 +25,8 @@ export default function Form() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState({ message: "" });
+  const [sending, setSending] = useState(false);
+  const inFlight = useRef(false);
 
   const gatewayUrl = process.env.NEXT_PUBLIC_ALEX_GATEWAY_URL;
 
@@ -41,31 +44,28 @@ export default function Form() {
         "Message service is not configured yet, please try again later!",
         { id: toastId }
       );
-      return;
+      return false;
     }
 
     try {
-      const res = await fetch(`${gatewayUrl}/contact`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(params),
-      });
-      if (!res.ok) throw new Error(`gateway responded ${res.status}`);
+      await persistContact(gatewayUrl, params);
       toast.success(
         "I have received your message, I will get back to you soon!",
         { id: toastId }
       );
-    } catch (error) {
-      console.log("error", error);
+      return true;
+    } catch {
       toast.error(
         "There was an error sending your message, please try again later!",
         { id: toastId }
       );
+      return false;
     }
   };
 
-  const onSubmit = () => {
-    event!.preventDefault();
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (inFlight.current) return;
 
     if (!name || !email || !message) {
       setErrors({ message: "Please fill all the fields" });
@@ -89,11 +89,19 @@ export default function Form() {
       message: message,
     };
 
-    sendEmail(templateParams);
-
-    setName("");
-    setEmail("");
-    setMessage("");
+    setErrors({ message: "" });
+    inFlight.current = true;
+    setSending(true);
+    try {
+      if (await sendEmail(templateParams)) {
+        setName("");
+        setEmail("");
+        setMessage("");
+      }
+    } finally {
+      inFlight.current = false;
+      setSending(false);
+    }
   };
 
   return (
@@ -104,6 +112,7 @@ export default function Form() {
         initial="hidden"
         animate="show"
         onSubmit={onSubmit}
+        aria-busy={sending}
         className="max-w-lg w-full flex flex-col items-center justify-center space-y-4 "
       >
         <motion.input
@@ -112,6 +121,7 @@ export default function Form() {
           placeholder="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          readOnly={sending}
           className="w-full p-2 rounded-md shadow-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 custom-bg"
         />
         <motion.input
@@ -120,6 +130,7 @@ export default function Form() {
           placeholder="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          readOnly={sending}
           className="w-full p-2 rounded-md shadow-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 custom-bg"
         />
         <motion.textarea
@@ -128,6 +139,7 @@ export default function Form() {
           rows={5}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          readOnly={sending}
           className="w-full p-2 rounded-md shadow-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 custom-bg"
         />
         {errors && (
@@ -143,6 +155,7 @@ export default function Form() {
       hover:shadow-glass-sm backdrop-blur-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 cursor-pointer capitalize
       "
           type="submit"
+          disabled={sending}
         />
       </motion.form>
     </>
